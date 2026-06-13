@@ -2,11 +2,9 @@
 
 ## Overview
 
-This project demonstrates the use of Ansible to automate baseline configuration and hardening of multiple Rocky Linux servers.
+This project demonstrates the use of Ansible to automate baseline Linux server configuration across multiple Rocky Linux systems.
 
-The environment consists of one Ansible control node managing two Rocky Linux servers. The playbook automates common Linux administration tasks including user provisioning, package installation, SSH hardening, firewall configuration, web server deployment, and custom system banner configuration.
-
-The goal of this project was to gain hands-on experience with Ansible automation while applying Linux administration concepts commonly found in enterprise environments.
+The goal was to standardize system configuration, improve security, deploy common services, and demonstrate infrastructure automation using Ansible. The project provisions administrative access, installs required packages, hardens SSH, configures the firewall, deploys a web server, and creates a dynamic Message of the Day (MOTD) using Ansible facts.
 
 ---
 
@@ -14,170 +12,52 @@ The goal of this project was to gain hands-on experience with Ansible automation
 
 - Ansible Automation
 - Linux Administration
-- Rocky Linux
-- Configuration Management
 - Infrastructure as Code (IaC)
-- Multi-Node Management
 - SSH Hardening
+- User Management
+- Package Management
 - Firewalld Administration
-- Nginx Deployment
-- Jinja2 Templates
-- User and Group Management
+- NGINX Deployment
+- Jinja2 Templating
+- Variable Management
 - Service Management
-- System Hardening
-- Idempotent Automation
-- Troubleshooting and Verification
+- Idempotent Configuration Management
 
 ---
 
 ## Environment
 
-| Component | Details |
-|------------|----------|
-| Control Node | Rocky Linux |
-| Managed Nodes | Server1, Server2 |
+| Component | Value |
+|------------|------------|
+| Control Node | Rocky Linux 9 |
+| Managed Nodes | Rocky Linux 9 |
 | Automation Tool | Ansible |
-| Web Server | Nginx |
-| Firewall | Firewalld |
-| Template Engine | Jinja2 |
+| Web Server | NGINX |
+| Firewall | firewalld |
+| Configuration Method | Playbooks |
+| Templating Engine | Jinja2 |
 
 ---
 
 ## Project Structure
 
 ```text
-ansible-linux-baseline/
+ansible/
 ├── ansible.cfg
 ├── inventory
 ├── site.yml
 ├── group_vars/
 │   └── all.yml
-├── playbooks/
-│   ├── users.yml
-│   ├── packages.yml
-│   ├── ssh.yml
-│   ├── firewall.yml
-│   ├── nginx.yml
-│   └── motd.yml
-└── templates/
-    └── motd.j2
+├── templates/
+│   └── motd.j2
+└── playbooks/
+    ├── users.yml
+    ├── packages.yml
+    ├── ssh.yml
+    ├── firewall.yml
+    ├── nginx.yml
+    └── motd.yml
 ```
-
----
-
-## Configuration Tasks
-
-### User Management
-
-Created a centralized administrative account across all managed nodes.
-
-Tasks performed:
-
-- Created `sysadmin` user
-- Added user to the `wheel` group
-- Configured login shell
-- Created user home directory
-
-Screenshot:
-
-![Users Playbook](users_yml.png)
-
----
-
-### Package Installation
-
-Installed common administration and infrastructure packages across all managed nodes.
-
-Packages included:
-
-- vim
-- wget
-- curl
-- git
-- nginx
-- firewalld
-
-Screenshot:
-
-![Packages Playbook](packages_yml.png)
-
----
-
-### SSH Hardening
-
-Configured OpenSSH security settings to improve remote administration security.
-
-Changes included:
-
-- Disabled direct root login
-- Configured SSH idle timeout
-- Configured ClientAliveCountMax
-- Restarted SSH service
-
-Screenshot:
-
-![SSH Playbook](ssh_yml.png)
-
----
-
-### Firewall Configuration
-
-Configured Firewalld to allow required services.
-
-Services enabled:
-
-- SSH
-- HTTP
-
-Screenshot:
-
-![Firewall Playbook](firewall_yml.png)
-
----
-
-### Nginx Deployment
-
-Installed and configured the Nginx web server.
-
-Tasks performed:
-
-- Enabled Nginx service
-- Started Nginx service
-- Deployed custom web page
-
-Screenshot:
-
-![Nginx Playbook](nginx_yml.png)
-
----
-
-### Dynamic MOTD Deployment
-
-Created a dynamic Message of the Day using Jinja2 templates and Ansible Facts.
-
-Information displayed:
-
-- Hostname
-- IP Address
-- Administrative banner
-
-Template Screenshot:
-
-![MOTD Template](motd_j2.png)
-
-Playbook Screenshot:
-
-![MOTD Playbook](motd_yml.png)
-
----
-
-## Main Playbook
-
-The project uses a centralized playbook to orchestrate all configuration tasks.
-
-Screenshot:
-
-![Site Playbook](site_yml.png)
 
 ---
 
@@ -185,7 +65,7 @@ Screenshot:
 
 ### Ansible Configuration File
 
-Configured Ansible defaults including inventory and privilege escalation settings.
+Configured Ansible defaults including inventory location, privilege escalation, and execution settings.
 
 Screenshot:
 
@@ -195,7 +75,7 @@ Screenshot:
 
 ### Inventory
 
-Defined managed hosts for automation.
+Defined managed hosts used by the Ansible control node.
 
 Screenshot:
 
@@ -203,9 +83,22 @@ Screenshot:
 
 ---
 
-### Variables
+### Group Variables
 
-Used group variables to centralize reusable configuration values.
+Centralized reusable variables used throughout the project.
+
+Variables include:
+
+- Administrative username
+- Common package list
+
+Packages deployed:
+
+- wget
+- curl
+- git
+- nginx
+- firewalld
 
 Screenshot:
 
@@ -213,15 +106,110 @@ Screenshot:
 
 ---
 
+## Main Playbook
+
+A centralized playbook was created to orchestrate all configuration tasks.
+
+Screenshot:
+
+![Site Playbook](site_yml.png)
+
+---
+
+## Configuration Tasks
+
+### User Management
+
+Created a centralized administrative account and added it to the wheel group for sudo access.
+
+Screenshot:
+
+![Users Playbook](users_yml.png)
+
+Verification:
+
+![Sysadmin Verification](sysadmin_check.png)
+
+---
+
+### Package Installation
+
+Installed common administration packages and required services.
+
+Screenshot:
+
+![Packages Playbook](packages_yml.png)
+
+---
+
+### SSH Hardening
+
+Configured SSH security settings including:
+
+- Disabled direct root login
+- Configured ClientAliveInterval
+- Configured ClientAliveCountMax
+- Restarted SSH service automatically
+
+Screenshot:
+
+![SSH Playbook](ssh_yml.png)
+
+Verification:
+
+![SSH Verification](ssh_check.png)
+
+---
+
+### Firewall Configuration
+
+Configured firewalld and ensured SSH and HTTP services were allowed.
+
+Screenshot:
+
+![Firewall Playbook](firewall_yml.png)
+
+Verification:
+
+![Firewall Verification](firewall_check.png)
+
+---
+
+### NGINX Deployment
+
+Installed and enabled the NGINX web service.
+
+Screenshot:
+
+![NGINX Playbook](nginx_yml.png)
+
+Verification:
+
+![NGINX Verification](nginx_check.png)
+
+---
+
+### Dynamic MOTD Deployment
+
+Created a Jinja2 template that generates a dynamic login banner using Ansible facts.
+
+Template:
+
+![MOTD Template](motd_j2.png)
+
+Playbook:
+
+![MOTD Playbook](motd_yml.png)
+
+Verification:
+
+![MOTD Verification](motd_check.png)
+
+---
+
 ## Playbook Execution
 
-Successfully executed the playbook against both managed nodes.
-
-Results:
-
-- Server1 configured successfully
-- Server2 configured successfully
-- No failures encountered
+Executed the site playbook against all managed nodes.
 
 Screenshot:
 
@@ -229,105 +217,37 @@ Screenshot:
 
 ---
 
-## Verification
-
-### User Verification
-
-Verified that the administrative account was created on all managed nodes.
-
-Screenshot:
-
-![User Verification](sysadmin_check.png)
-
----
-
-### SSH Verification
-
-Verified SSH hardening settings.
-
-Confirmed:
-
-- PermitRootLogin disabled
-- ClientAliveInterval configured
-- ClientAliveCountMax configured
-
-Screenshot:
-
-![SSH Verification](ssh_check.png)
-
----
-
-### Firewall Verification
-
-Verified Firewalld configuration.
-
-Confirmed:
-
-- SSH service allowed
-- HTTP service allowed
-
-Screenshot:
-
-![Firewall Verification](firewall_check.png)
-
----
-
-### Nginx Verification
-
-Verified that Nginx was active on all managed nodes.
-
-Screenshot:
-
-![Nginx Verification](nginx_check.png)
-
----
-
-### MOTD Verification
-
-Verified successful deployment of the dynamic MOTD banner.
-
-Screenshot:
-
-![MOTD Verification](motd_check.png)
-
----
-
 ## Idempotency Verification
 
-Ansible playbooks should be safe to execute repeatedly without causing unwanted changes.
-
-The playbook was executed multiple times to verify idempotent behavior.
+Re-ran the playbook to verify idempotent behavior and ensure systems remained in the desired state.
 
 Screenshot:
 
-![Idempotency Verification](idempotency_check.png)
+![Idempotency Check](idempotency_check.png)
+
+---
+
+## Results
+
+The playbook successfully automated the following tasks across multiple Rocky Linux servers:
+
+- Created administrative user accounts
+- Installed common Linux packages
+- Hardened SSH configuration
+- Configured firewalld rules
+- Deployed and enabled NGINX
+- Generated a dynamic MOTD using Jinja2 templates
+- Demonstrated idempotent Ansible automation
 
 ---
 
 ## Lessons Learned
 
-Through this project I gained practical experience with:
+Through this project I gained hands-on experience with:
 
-- Building and managing Ansible inventories
-- Structuring multi-playbook Ansible projects
-- Managing Linux users and groups through automation
-- Deploying services across multiple systems
-- Hardening SSH configurations
-- Managing Firewalld using Ansible
-- Deploying dynamic content with Jinja2 templates
-- Verifying automation results across multiple hosts
-- Troubleshooting Ansible playbooks and Linux services
-- Applying Infrastructure as Code principles to Linux administration
-
----
-
-## Future Improvements
-
-Potential enhancements include:
-
-- Converting playbooks into reusable Ansible Roles
-- Implementing Ansible Handlers
-- Managing SELinux policies through Ansible
-- Deploying Docker containers through automation
-- Integrating Ansible Vault for secret management
-- Expanding web server configuration and SSL deployment
+- Organizing Ansible projects using playbooks and variables
+- Managing Linux servers at scale
+- Using Jinja2 templates to generate dynamic configuration files
+- Implementing infrastructure automation workflows
+- Verifying configuration compliance across multiple hosts
+- Building repeatable and idempotent automation processes
